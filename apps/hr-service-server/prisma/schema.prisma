@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Payroll {
+  amount     Float?
+  createdAt  DateTime  @default(now())
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  id         String    @id @default(cuid())
+  payDate    DateTime?
+  status     String?
+  updatedAt  DateTime  @updatedAt
+}
+
+model LeaveApplication {
+  createdAt  DateTime  @default(now())
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  endDate    DateTime?
+  id         String    @id @default(cuid())
+  reason     String?
+  startDate  DateTime?
+  status     String?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Department {
+  createdAt DateTime   @default(now())
+  employees Employee[]
+  id        String     @id @default(cuid())
+  location  String?
+  name      String?
+  updatedAt DateTime   @updatedAt
+}
+
+model Employee {
+  createdAt         DateTime           @default(now())
+  department        Department?        @relation(fields: [departmentId], references: [id])
+  departmentId      String?
+  email             String?
+  firstName         String?
+  hireDate          DateTime?
+  id                String             @id @default(cuid())
+  lastName          String?
+  leaveApplications LeaveApplication[]
+  payrolls          Payroll[]
+  phoneNumber       String?
+  position          String?
+  salary            Float?
+  updatedAt         DateTime           @updatedAt
+}
